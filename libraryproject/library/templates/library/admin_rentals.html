@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Rentals</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<nav class="navbar navbar-dark px-4 py-3" style="background:#312e81">
+    <span class="navbar-brand">📚 Library Admin</span>
+
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-light btn-sm">
+        Back to Dashboard
+    </a>
+</nav>
+
+<div class="container py-5">
+    <h2 class="mb-2">Rental Management</h2>
+    <p class="text-muted mb-4">
+        Monitor rentals, returns, due dates, and overdue fines.
+    </p>
+
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>User</th>
+                        <th>Book</th>
+                        <th>Rental Date</th>
+                        <th>Due Date</th>
+                        <th>Return Date</th>
+                        <th>Rental Fee</th>
+                        <th>Fine</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for rental in rentals %}
+                    <tr>
+                        <td>{{ rental.user.username }}</td>
+                        <td>{{ rental.book.title }}</td>
+                        <td>{{ rental.rental_date }}</td>
+                        <td>{{ rental.due_date }}</td>
+
+                        <td>
+                            {{ rental.return_date|default:"Not returned" }}
+                        </td>
+
+                        <td>₹{{ rental.rental_fee }}</td>
+                        <td>₹{{ rental.fine|floatformat:2 }}</td>
+
+                        <td>
+                            {% if rental.return_date %}
+                                <span class="badge bg-success">Returned</span>
+                            {% elif rental.fine > 0 %}
+                                <span class="badge bg-danger">Overdue</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">
+                                    On Loan
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4">
+                            No rental records yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
